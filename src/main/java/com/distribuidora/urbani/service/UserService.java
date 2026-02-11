@@ -2,7 +2,6 @@ package com.distribuidora.urbani.service;
 
 import com.distribuidora.urbani.entity.User;
 import com.distribuidora.urbani.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,12 +26,7 @@ public class UserService implements UserDetailsService {
             throw new IllegalStateException("User has no roles: " + username);
         }
 
-        return User.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .role(user.getRole())
-                .build();
+        return user;
 
     }
 }
