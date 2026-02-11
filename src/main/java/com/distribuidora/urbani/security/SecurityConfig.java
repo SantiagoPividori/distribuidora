@@ -1,5 +1,6 @@
 package com.distribuidora.urbani.security;
 
+import com.distribuidora.urbani.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,8 +37,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
 //                    //Configure public endpoints
-                    http.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
-                    http.requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll();
 //                    //Configure private endpoints
 //                    http.requestMatchers(HttpMethod.GET, "/auth/holaPremium").hasAuthority("READ");
 //                    //Configure rest of endpoints
@@ -60,8 +60,8 @@ public class SecurityConfig {
 
     //This form of authentication is for database. He needs two components...
     @Bean
-    public AuthenticationProvider authenticationProvider(UserDetailServiceImpl userDetailService) {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailService);
+    public AuthenticationProvider authenticationProvider(UserService userService) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

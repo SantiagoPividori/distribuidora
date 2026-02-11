@@ -6,20 +6,22 @@ import com.distribuidora.urbani.security.dto.AuthResponse;
 import com.distribuidora.urbani.security.dto.LoginRequest;
 import com.distribuidora.urbani.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserService userService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -50,13 +52,27 @@ public class AuthService {
 
     public ResponseEntity<AuthResponse> login(LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password())
-        );
+        log.info("Login request: {}", request);
+
+        Authentication authentication = null;
+
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.username(),
+                            request.password())
+            );
+
+            log.info("Authentication: {}", authentication);
+
+        } catch (AuthenticationException e) {
+            log.info("Authentication failed: {}", e.getMessage());
+        }
+
 
         User user = (User) authentication.getPrincipal();
+
+        log.info("User {} logged in", user.getId());
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);

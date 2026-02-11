@@ -18,14 +18,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /*
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
-        return null;
-    }
-     */
-
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         return authService.login(loginRequest);

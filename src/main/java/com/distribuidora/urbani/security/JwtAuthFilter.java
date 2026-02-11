@@ -1,5 +1,6 @@
 package com.distribuidora.urbani.security;
 
+import com.distribuidora.urbani.service.UserService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailService;
+    private final UserService userService;
 
     //Este metodo es el responsable de verificar que el token sea válido
     //request: el pedido que entra | response: lo que vamos a devolver | filterChain: pásale el control al siguiente filtro
@@ -54,7 +55,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             //Cargamos el usuario
-            UserDetails userDetails = userDetailService.loadUserByUsername(username);
+            UserDetails userDetails = userService.loadUserByUsername(username);
 
 
             if (jwtService.isAccessToken(jwt)) {
