@@ -65,32 +65,32 @@ public class AuthService {
 
             log.info("Authentication: {}", authentication);
 
+            User user = (User) authentication.getPrincipal();
+
+            log.info("User {} logged in", user.getId());
+
+            String accessToken = jwtService.generateAccessToken(user);
+            String refreshToken = jwtService.generateRefreshToken(user);
+
+            Instant now = Instant.now();
+            assert user != null;
+            user.setRefreshTokenJti(jwtService.extractJti(refreshToken));
+            user.setRefreshTokenExpirationAt(now.plus(jwtService.getRefreshTokenExpirationInMs(), ChronoUnit.MILLIS));
+            userRepository.save(user);
+
+            AuthResponse authResponse = new AuthResponse(
+                    accessToken,
+                    refreshToken,
+                    SecurityConstants.TOKEN_TYPE_BEARER,
+                    now.plus(jwtService.getTokenExpirationInMs(), ChronoUnit.MILLIS),
+                    user.getRefreshTokenExpirationAt());
+
+            return ResponseEntity.ok(authResponse);
+
         } catch (AuthenticationException e) {
-            log.info("Authentication failed: {}", e.getMessage());
+            log.warn("Authentication failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
-
-
-        User user = (User) authentication.getPrincipal();
-
-        log.info("User {} logged in", user.getId());
-
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        Instant now = Instant.now();
-        assert user != null;
-        user.setRefreshTokenJti(jwtService.extractJti(refreshToken));
-        user.setRefreshTokenExpirationAt(now.plus(jwtService.getRefreshTokenExpirationInMs(), ChronoUnit.MILLIS));
-        userRepository.save(user);
-
-        AuthResponse authResponse = new AuthResponse(
-                accessToken,
-                refreshToken,
-                SecurityConstants.TOKEN_TYPE_BEARER,
-                now.plus(jwtService.getTokenExpirationInMs(), ChronoUnit.MILLIS),
-                user.getRefreshTokenExpirationAt());
-
-        return ResponseEntity.ok(authResponse);
     }
 
 /*
