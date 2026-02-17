@@ -35,4 +35,26 @@ public class UserService implements UserDetailsService {
                 .build();
 
     }
+
+    private String generateUsername(String firstName, String lastName) {
+
+        String baseUsername = (firstName + "." + lastName).toLowerCase()
+                .replaceAll("[áàäâ]", "a")
+                .replaceAll("[éèëê]", "e")
+                .replaceAll("[íìïî]", "i")
+                .replaceAll("[óòöô]", "o")
+                .replaceAll("[úùüû]", "u")
+                .replaceAll("ñ", "n")
+                .replaceAll("[^a-z0-9.]", "");
+
+        int count = 1;
+        String username = baseUsername;
+
+        while (userRepository.findByUsername(username).isPresent()) {
+            username = baseUsername + count;
+            count++;
+        }
+        return username;
+    }
+
 }
