@@ -1,6 +1,9 @@
 package com.distribuidora.urbani.security;
 
 import com.distribuidora.urbani.entity.User;
+import com.distribuidora.urbani.exceptions.InvalidRefreshTokenException;
+import com.distribuidora.urbani.exceptions.UserNotFoundException;
+import com.distribuidora.urbani.security.dto.RefreshTokenRequest;
 import com.distribuidora.urbani.repository.UserRepository;
 import com.distribuidora.urbani.security.dto.AuthResponse;
 import com.distribuidora.urbani.security.dto.LoginRequest;
@@ -8,7 +11,6 @@ import com.distribuidora.urbani.security.dto.RegisterRequest;
 import com.distribuidora.urbani.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -90,37 +92,34 @@ public class AuthService {
         return authResponse;
     }
 
-/*
     public AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
 
         String refreshToken = refreshTokenRequest.refreshToken();
         final String username = jwtService.extractUsername(refreshToken);
         String jti = jwtService.extractJti(refreshToken);
 
-        UserEntity user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("username", username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found by username: " + username));
 
         if (user.getRefreshTokenExpirationAt() == null || user.getRefreshTokenExpirationAt().isBefore(Instant.now())) {
-            throw new InvalidRefreshTokenException();
+            throw new InvalidRefreshTokenException("Refresh token expired");
         }
 
         // validar refresh token
         if (!jwtService.isRefreshToken(refreshToken)) {
-            throw new InvalidRefreshTokenException();
+            throw new InvalidRefreshTokenException("Invalid refresh token");
         }
 
         if (!jti.equals(user.getRefreshTokenJti())) {
-            throw new InvalidRefreshTokenException();
+            throw new InvalidRefreshTokenException("Invalid refresh token");
         }
 
-
         // 4) Generar nuevo access token
-        CustomUserDetails customUserDetails = new CustomUserDetails(user);
-        String newAccessToken = jwtService.generateAccessToken(customUserDetails);
+        String newAccessToken = jwtService.generateAccessToken(user);
 
         // 5)
         Instant now = Instant.now();
-        String newRefreshToken = jwtService.generateRefreshToken(customUserDetails);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
         user.setRefreshTokenJti(jwtService.extractJti(newRefreshToken));
         user.setRefreshTokenExpirationAt(now.plus(jwtService.getRefreshTokenExpirationInMs(), ChronoUnit.MILLIS));
         userRepository.save(user);
@@ -130,9 +129,7 @@ public class AuthService {
                 newRefreshToken,
                 SecurityConstants.TOKEN_TYPE_BEARER,
                 now.plus(jwtService.getTokenExpirationInMs(), ChronoUnit.MILLIS),
-                user.getRefreshTokenExpirationAt(),
-                UserWebMapper.toResponse(user)
+                user.getRefreshTokenExpirationAt()
         );
     }
-*/
 }
