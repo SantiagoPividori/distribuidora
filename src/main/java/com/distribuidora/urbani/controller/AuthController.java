@@ -3,6 +3,7 @@ package com.distribuidora.urbani.controller;
 import com.distribuidora.urbani.security.AuthService;
 import com.distribuidora.urbani.security.dto.AuthResponse;
 import com.distribuidora.urbani.security.dto.LoginRequest;
+import com.distribuidora.urbani.security.dto.RefreshTokenRequest;
 import com.distribuidora.urbani.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(authService.login(loginRequest));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
     }
 
 }
