@@ -4,10 +4,10 @@ import com.distribuidora.urbani.entity.User;
 import com.distribuidora.urbani.repository.UserRepository;
 import com.distribuidora.urbani.security.dto.AuthResponse;
 import com.distribuidora.urbani.security.dto.LoginRequest;
-import com.distribuidora.urbani.security.dto.RegisterRequest;
 import com.distribuidora.urbani.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,17 +23,17 @@ import java.time.temporal.ChronoUnit;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final UserService userService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-
+/*
     public AuthResponse register(RegisterRequest registerRequest) {
 
-        User user = userService.register(registerRequest);
+        UserEntity user = userServiceImpl.register(registerRequest);
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
-        String accessToken = jwtService.generateAccessToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
+        String accessToken = jwtService.generateAccessToken(customUserDetails);
+        String refreshToken = jwtService.generateRefreshToken(customUserDetails);
 
         Instant now = Instant.now();
         user.setRefreshTokenJti(jwtService.extractJti(refreshToken));
@@ -45,8 +45,10 @@ public class AuthService {
                 refreshToken,
                 SecurityConstants.TOKEN_TYPE_BEARER,
                 now.plus(jwtService.getTokenExpirationInMs(), ChronoUnit.MILLIS),
-                user.getRefreshTokenExpirationAt());
+                user.getRefreshTokenExpirationAt(),
+                UserWebMapper.toResponse(user));
     }
+*/
 
     public AuthResponse login(LoginRequest request) {
 
@@ -66,7 +68,6 @@ public class AuthService {
         } catch (AuthenticationException e) {
             log.info("Authentication failed: {}", e.getMessage());
         }
-
 
         User user = (User) authentication.getPrincipal();
 

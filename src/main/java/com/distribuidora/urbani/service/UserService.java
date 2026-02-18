@@ -55,14 +55,7 @@ public class UserService implements UserDetailsService {
         if (user.getRole() == null) {
             throw new IllegalStateException("User has no roles: " + username);
         }
-
-        return User.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .role(user.getRole())
-                .build();
-
+        return user;
     }
 
     private String generateUsername(String firstName, String lastName) {
