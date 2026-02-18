@@ -33,6 +33,7 @@ public class SecurityConfig {
 //                    //Configure public endpoints
                     http.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/auth/refresh-token").permitAll();
 //                    //Configure private endpoints
 //                    http.requestMatchers(HttpMethod.GET, "/auth/holaPremium").hasAuthority("READ");
 //                    //Configure rest of endpoints
