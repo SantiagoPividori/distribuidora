@@ -60,7 +60,7 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public List<Client> searchByNameOrCuit(String query) {
-        return null;
+    public List<Client> findByName(String name) {
+        return clientRepository.findByName(name);
     }
 }
