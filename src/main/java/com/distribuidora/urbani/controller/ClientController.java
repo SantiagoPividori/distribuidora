@@ -40,8 +40,8 @@ public class ClientController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Client>> searchClients(@RequestParam String name) {
-        return ResponseEntity.ok(clientService.findByName(name));
+    public ResponseEntity<List<Client>> searchClients(@RequestParam String firstName) {
+        return ResponseEntity.ok(clientService.findByFirstName(firstName));
     }
 
     @GetMapping("/{id}")

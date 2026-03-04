@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-//Implementamos UserDetailsService para poder autenticar el User
-
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
