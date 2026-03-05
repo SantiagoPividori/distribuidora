@@ -54,7 +54,7 @@ public class AuthService {
 
         log.info("Login request: {}", request);
 
-        Authentication authentication = null;
+        Authentication authentication;
 
         try {
             authentication = authenticationManager.authenticate(
@@ -66,7 +66,8 @@ public class AuthService {
             log.info("Authentication: {}", authentication);
 
         } catch (AuthenticationException e) {
-            log.info("Authentication failed: {}", e.getMessage());
+            log.warn("Authentication failed for user {}: {}", request.username(), e.getMessage());
+            throw e; //
         }
 
         User user = (User) authentication.getPrincipal();
@@ -77,7 +78,6 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         Instant now = Instant.now();
-        assert user != null;
         user.setRefreshTokenJti(jwtService.extractJti(refreshToken));
         user.setRefreshTokenExpirationAt(now.plus(jwtService.getRefreshTokenExpirationInMs(), ChronoUnit.MILLIS));
         userRepository.save(user);
