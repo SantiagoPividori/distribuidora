@@ -1,4 +1,4 @@
-package com.distribuidora.urbani.dto;
+package com.distribuidora.urbani.controller;
 
 import com.distribuidora.urbani.service.OrderItemService;
 import lombok.RequiredArgsConstructor;
