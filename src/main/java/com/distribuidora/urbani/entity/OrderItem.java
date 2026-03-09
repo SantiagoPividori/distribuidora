@@ -1,6 +1,6 @@
 package com.distribuidora.urbani.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +22,7 @@ public class OrderItem {
     private UUID id;
     @ManyToOne(optional = false)
     @JoinColumn(name = "order_id")
-    @JsonIgnore
+    @JsonIgnoreProperties("orderItems")
     private Order order;
     @ManyToOne(optional = false)
     @JoinColumn(name = "product_id")
