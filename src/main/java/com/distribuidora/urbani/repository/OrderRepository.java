@@ -18,4 +18,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     List<Order> findBySellerAndCreatedAtBetween(User seller, LocalDateTime start, LocalDateTime end);
 
+    List<Order> findByClientIdOrderByCreatedAtDesc(UUID clientId);
+
 }

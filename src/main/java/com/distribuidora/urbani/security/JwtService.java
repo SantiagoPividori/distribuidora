@@ -54,6 +54,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 //Claim es una parte del payload, que sería toda la información que mandamos, entonces esta es una parte de toda la información.
                 .claim(CLAIM_TYPE, tokenType)
+                .claim("role", role)
                 //Cuando creamos él token
                 .issuedAt(now)
                 //Cuando expira el token

@@ -22,7 +22,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN', 'SUPERVISOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERVISOR')")
     public ResponseEntity<Product> create(@Valid @RequestBody ProductRequest request) {
         Product savedProduct = productService.createProduct(request);
         URI location = ServletUriComponentsBuilder

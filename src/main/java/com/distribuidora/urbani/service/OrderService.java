@@ -2,6 +2,7 @@ package com.distribuidora.urbani.service;
 
 import com.distribuidora.urbani.dto.OrderItemRequest;
 import com.distribuidora.urbani.dto.OrderRequest;
+import com.distribuidora.urbani.dto.OrderResponse;
 import com.distribuidora.urbani.entity.*;
 import com.distribuidora.urbani.entity.utility.OrderStatus;
 import com.distribuidora.urbani.exceptions.ResourceNotFoundException;
@@ -87,5 +88,21 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCELLED);
         return orderRepository.save(order);
+    }
+
+    public List<OrderResponse> getOrdersByClientId(UUID clientId) {
+        return orderRepository.findByClientIdOrderByCreatedAtDesc(clientId)
+                .stream()
+                .map(o -> new OrderResponse(
+                        o.getId(),
+                        o.getOrderNumber(),
+                        o.getClient().getBusinessName(),
+                        o.getClient().getId(),
+                        o.getCreatedAt(),
+                        o.getTotalAmount(),
+                        o.getStatus(),
+                        o.getOrderItems().size()
+                ))
+                .toList();
     }
 }
