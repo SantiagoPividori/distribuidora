@@ -1,5 +1,6 @@
 package com.distribuidora.urbani.controller;
 
+import com.distribuidora.urbani.dto.OrderDetailResponse;
 import com.distribuidora.urbani.dto.OrderRequest;
 import com.distribuidora.urbani.dto.OrderResponse;
 import com.distribuidora.urbani.entity.Order;
@@ -40,7 +41,7 @@ public class OrderController {
     }
 
     @GetMapping("/my-orders")
-    public ResponseEntity<List<Order>> getMyOrders(@AuthenticationPrincipal User user, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<List<OrderResponse>> getMyOrders(@AuthenticationPrincipal User user, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(orderService.getOrdersBySellerAndDate(user, date));
     }
 
