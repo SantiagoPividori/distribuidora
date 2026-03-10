@@ -99,7 +99,8 @@ public class OrderService {
 
     @Transactional
     public Order cancelOrder(UUID id) {
-        Order order = getOrderById(id);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         // Solo permitir cancelar si está PENDIENTE
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new IllegalStateException("No se puede cancelar un pedido que ya fue procesado");
