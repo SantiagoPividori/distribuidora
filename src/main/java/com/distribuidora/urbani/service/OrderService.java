@@ -69,14 +69,29 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
-    public List<Order> getOrdersBySellerAndDate(User seller, LocalDate date) {
-        LocalDate targetDate = (date != null) ? date : NOW_ARGENTINA;
+    public List<OrderResponse> getOrdersBySellerAndDate(User seller, LocalDate date) {
+        List<Order> orders;
 
-        LocalDateTime start = targetDate.atStartOfDay();
-        LocalDateTime end = targetDate.atTime(LocalTime.MAX);
+        if (date != null) {
+            LocalDateTime start = date.atStartOfDay();
+            LocalDateTime end = date.atTime(LocalTime.MAX);
+            orders = orderRepository.findBySellerAndCreatedAtBetween(seller, start, end);
+        } else {
+            orders = orderRepository.findBySellerOrderByCreatedAtDesc(seller);
+        }
 
-        return orderRepository.findBySellerAndCreatedAtBetween(seller, start, end);
-
+        return orders.stream()
+                .map(o -> new OrderResponse(
+                        o.getId(),
+                        o.getOrderNumber(),
+                        o.getClient().getBusinessName(),
+                        o.getClient().getId(),
+                        o.getCreatedAt(),
+                        o.getTotalAmount(),
+                        o.getStatus(),
+                        o.getOrderItems().size()
+                ))
+                .toList();
     }
 
     @Transactional
