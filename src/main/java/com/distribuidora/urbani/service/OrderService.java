@@ -1,8 +1,6 @@
 package com.distribuidora.urbani.service;
 
-import com.distribuidora.urbani.dto.OrderItemRequest;
-import com.distribuidora.urbani.dto.OrderRequest;
-import com.distribuidora.urbani.dto.OrderResponse;
+import com.distribuidora.urbani.dto.*;
 import com.distribuidora.urbani.entity.*;
 import com.distribuidora.urbani.entity.utility.OrderStatus;
 import com.distribuidora.urbani.exceptions.ResourceNotFoundException;
@@ -64,9 +62,29 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    public Order getOrderById(UUID id) {
-        return orderRepository.findById(id)
+    public OrderDetailResponse getOrderById(UUID id) {
+        Order o = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        List<OrderItemResponse> orderItemResponsesList = o.getOrderItems().stream()
+                .map(orderItem -> new OrderItemResponse(
+                        orderItem.getId(),
+                        orderItem.getProduct().getName(),
+                        orderItem.getQuantity(),
+                        orderItem.getUnitPrice(),
+                        orderItem.getSubtotal()
+                ))
+                .toList();
+
+        return new OrderDetailResponse(
+                o.getId(),
+                o.getOrderNumber(),
+                o.getClient().getBusinessName(),
+                o.getClient().getId(),
+                o.getCreatedAt(),
+                o.getTotalAmount(),
+                o.getStatus(),
+                orderItemResponsesList);
     }
 
     public List<Order> getOrdersBySellerAndDate(User seller, LocalDate date) {
@@ -81,7 +99,8 @@ public class OrderService {
 
     @Transactional
     public Order cancelOrder(UUID id) {
-        Order order = getOrderById(id);
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         // Solo permitir cancelar si está PENDIENTE
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new IllegalStateException("No se puede cancelar un pedido que ya fue procesado");
