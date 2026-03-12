@@ -113,15 +113,26 @@ public class OrderService {
     }
 
     @Transactional
-    public Order cancelOrder(UUID id) {
+    public OrderResponse updateStatus(UUID id, UpdateOrderStatusRequest updateOrderStatusRequest) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         // Solo permitir cancelar si está PENDIENTE
-        if (order.getStatus() != OrderStatus.PENDING) {
-            throw new IllegalStateException("No se puede cancelar un pedido que ya fue procesado");
+        if (order.getStatus() == updateOrderStatusRequest.status()) {
+            throw new IllegalStateException("Same state");
         }
-        order.setStatus(OrderStatus.CANCELLED);
-        return orderRepository.save(order);
+        order.setStatus(updateOrderStatusRequest.status());
+        Order o =  orderRepository.save(order);
+
+        return new OrderResponse(
+                o.getId(),
+                o.getOrderNumber(),
+                o.getClient().getBusinessName(),
+                o.getClient().getId(),
+                o.getCreatedAt(),
+                o.getTotalAmount(),
+                o.getStatus(),
+                o.getOrderItems().size()
+        );
     }
 
     public List<OrderResponse> getOrdersByClientId(UUID clientId) {

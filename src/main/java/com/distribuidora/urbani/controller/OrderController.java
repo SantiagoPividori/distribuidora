@@ -3,6 +3,7 @@ package com.distribuidora.urbani.controller;
 import com.distribuidora.urbani.dto.OrderDetailResponse;
 import com.distribuidora.urbani.dto.OrderRequest;
 import com.distribuidora.urbani.dto.OrderResponse;
+import com.distribuidora.urbani.dto.UpdateOrderStatusRequest;
 import com.distribuidora.urbani.entity.Order;
 import com.distribuidora.urbani.entity.User;
 import com.distribuidora.urbani.service.OrderService;
@@ -50,9 +51,9 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
-    @PatchMapping("/{id}/cancel")
-    public ResponseEntity<Order> cancelOrder(@PathVariable UUID id) {
-        return ResponseEntity.ok(orderService.cancelOrder(id));
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<OrderResponse> updateStatus(@PathVariable UUID id, @RequestBody UpdateOrderStatusRequest updateOrderStatusRequest) {
+        return ResponseEntity.ok(orderService.updateStatus(id, updateOrderStatusRequest));
     }
 
     @GetMapping("/clients/{clientId}")
