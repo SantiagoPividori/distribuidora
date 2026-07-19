@@ -1,6 +1,7 @@
 package com.distribuidora.urbani.entity;
 
 import com.distribuidora.urbani.entity.utility.Role;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
+@JsonIgnoreType
 public class User implements UserDetails {
 
     @Id
