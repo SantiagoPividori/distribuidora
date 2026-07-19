@@ -14,6 +14,10 @@ public class WebConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("http://10.0.2.2:4200");
+        config.addAllowedOrigin("https://localhost");
+        config.addAllowedOrigin("capacitor://localhost");
+        config.addAllowedOrigin("https://10.0.2.2:4200");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
