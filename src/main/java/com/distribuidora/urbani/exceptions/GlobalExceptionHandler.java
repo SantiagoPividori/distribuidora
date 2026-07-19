@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
 
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
-                null,
+                "Hay campos con errores",
                 fields,
                 LocalDateTime.now()
         );
